@@ -24,8 +24,6 @@ nextGeneration grid = [[nextState grid i j | j <- [0..length (head grid) - 1]] |
         countLiveNeighbors x y = length [(i, j) | i <- [x-1..x+1], j <- [y-1..y+1], i /= x || j /= y, isValidIndex grid i j, grid !! i !! j == 1]
         countZombieNeighbors x y = length [(i, j) | i <- [x-1..x+1], j <- [y-1..y+1], i /= x || j /= y, isValidIndex grid i j, grid !! i !! j == 2]
 
-
-
 printGrid :: Grid -> IO ()
 printGrid grid = mapM_ printRow grid
   where

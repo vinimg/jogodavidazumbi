@@ -26,6 +26,8 @@ iterar matriz = do
 imprimirMatriz :: [[Int]] -> IO ()
 imprimirMatriz = mapM_ (putStrLn . unwords . map show)
 
+todosZeros :: [[Int]] -> Bool
+todosZeros matriz = all (== 0) (concat matriz)
 
 executarIteracoes :: Int -> [[Int]] -> Int -> IO ()
 executarIteracoes iteracaoAtual matriz iteracoesMaximas = do
@@ -38,12 +40,11 @@ executarIteracoes iteracaoAtual matriz iteracoesMaximas = do
                 then return ()
                 else executarIteracoes (iteracaoAtual + 1) (iterar matriz) iteracoesMaximas
 
-todosZeros :: [[Int]] -> Bool
-todosZeros matriz = all (== 0) (concat matriz)
+
 
 main :: IO ()
 main = do
-    conteudo <- readFile "50x55.txt"
+    conteudo <- readFile "3x3.txt"
     let matriz = map (map read . words) (lines conteudo) :: [[Int]]
     putStrLn "Digite o número de iterações:"
     iteracoes <- readLn :: IO Int
