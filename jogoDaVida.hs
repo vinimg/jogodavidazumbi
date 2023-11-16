@@ -1,22 +1,45 @@
 import System.IO
 
 vizinhos :: [[Int]] -> Int -> Int -> [Int]
-vizinhos matriz i j = [ matriz !! x !! y | x <- [max 0 (i-1)..min (length matriz - 1) (i+1)], y <- [max 0 (j-1)..min (length (matriz !! x) - 1) (j+1)], x /= i || y /= j ]
+vizinhos matriz i j = do
+    let xs = [max 0 (i-1)..min (length matriz - 1) (i+1)]
+    let ys = [max 0 (j-1)..min (length (head matriz) - 1) (j+1)]
+    [ matriz !! x !! y | x <- xs, y <- ys, x /= i || y /= j ]
 
 aplicarRegras :: [[Int]] -> Int -> Int -> Int
-aplicarRegras matriz i j
-    | celula == 0 && vivas == 3 = 1
-    | celula == 1 && (zumbis > 0 || vivas < 2 || vivas > 3) = if zumbis > 0 then 2 else 0
-    | celula == 2 && vivas == 0 = 0
-    | otherwise = celula
-    where
-        celula = matriz !! i !! j
-        vizinhanca = vizinhos matriz i j
-        vivas = length (filter (==1) vizinhanca)
-        zumbis = length (filter (==2) vizinhanca)
+aplicarRegras matriz i j = do
+    let celula = matriz !! i !! j
+    let vizinhanca = vizinhos matriz i j
+    let vivas = length (filter (==1) vizinhanca)
+    let zumbis = length (filter (==2) vizinhanca)
+    if celula == 0 && vivas == 3 then 1
+    else if celula == 1 && (zumbis > 0 || vivas < 2 || vivas > 3) then if zumbis > 0 then 2 else 0
+    else if celula == 2 && vivas == 0 then 0
+    else celula
 
 iterar :: [[Int]] -> [[Int]]
-iterar matriz = [ [ aplicarRegras matriz i j | j <- [0..length (matriz !! 0) - 1] ] | i <- [0..length matriz - 1] ]
+iterar matriz = do
+    let linhas = [0..length matriz - 1]
+    let colunas = [0..length (head matriz) - 1]
+    [ [ aplicarRegras matriz i j | j <- colunas ] | i <- linhas ]
+
+imprimirMatriz :: [[Int]] -> IO ()
+imprimirMatriz = mapM_ (putStrLn . unwords . map show)
+
+
+executarIteracoes :: Int -> [[Int]] -> Int -> IO ()
+executarIteracoes iteracaoAtual matriz iteracoesMaximas = do
+    if iteracaoAtual > iteracoesMaximas
+        then return ()
+        else do
+            putStrLn ("Iteração " ++ show iteracaoAtual ++ ":")
+            imprimirMatriz matriz
+            if todosZeros matriz
+                then return ()
+                else executarIteracoes (iteracaoAtual + 1) (iterar matriz) iteracoesMaximas
+
+todosZeros :: [[Int]] -> Bool
+todosZeros matriz = all (== 0) (concat matriz)
 
 main :: IO ()
 main = do
@@ -24,13 +47,4 @@ main = do
     let matriz = map (map read . words) (lines conteudo) :: [[Int]]
     putStrLn "Digite o número de iterações:"
     iteracoes <- readLn :: IO Int
-    loop iteracoes matriz 1
-    where
-        loop 0 _ _ = return ()
-        loop n matriz iter = do
-            let novaMatriz = iterar matriz
-            putStrLn ("Iteração " ++ show iter ++ ":")
-            mapM_ (putStrLn . unwords . map show) novaMatriz
-            if all (== 0) (concat novaMatriz)
-                then return ()
-                else loop (n-1) novaMatriz (iter+1)
+    executarIteracoes 0 matriz iteracoes
