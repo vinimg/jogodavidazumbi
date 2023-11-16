@@ -6,5 +6,9 @@ def generate_matrix_file(filepath, rows, cols):
         for row in matrix:
             f.write(' '.join(map(str, row)) + '\n')
 
+linha = 5
+coluna = 7
 
-generate_matrix_file('matrix1.txt', 10, 10)
+generate_matrix_file(f'{linha}x{coluna}.txt', linha, coluna)
+
+print(f'Matriz {linha}x{coluna} gerada com sucesso!')
