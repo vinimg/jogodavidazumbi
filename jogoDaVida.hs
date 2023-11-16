@@ -33,14 +33,19 @@ executarIteracoes iteracaoAtual matriz iteracoesMaximas = do
     imprimirMatriz matriz
     let novaMatriz = iterar matriz
     if matriz == novaMatriz
-        then putStrLn "O sistema está estável"
+        then putStrLn ("O sistema está estável na iteração " ++ show iteracaoAtual)
         else if iteracaoAtual >= iteracoesMaximas
             then putStrLn ("O sistema não estabilizou após " ++ show iteracoesMaximas ++ " iterações")
             else executarIteracoes (iteracaoAtual + 1) novaMatriz iteracoesMaximas
 
+
+
 main :: IO ()
 main = do
-    conteudo <- readFile "3x3.txt"
+    putStrLn "Digite o formato da matriz (por exemplo, 10x10, 20x20):"
+    formatoMatriz <- getLine
+    let nomeArquivo = formatoMatriz ++ ".txt"
+    conteudo <- readFile nomeArquivo
     let matriz = map (map read . words) (lines conteudo) :: [[Int]]
     putStrLn "Digite o número de iterações:"
     iteracoes <- readLn :: IO Int

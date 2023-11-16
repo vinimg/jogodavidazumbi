@@ -1,0 +1,2 @@
+run:
+	runhaskell jogoDaVida.hs 
