@@ -29,7 +29,7 @@ nextGeneration grid = [[nextState grid i j | j <- [0..length (head grid) - 1]] |
 printGrid :: Grid -> IO ()
 printGrid grid = mapM_ printRow grid
   where
-    printRow row = putStrLn (concatMap show row)
+    printRow row = putStrLn (unwords (map show row))
 
 simulateGame :: Grid -> Int -> IO ()
 simulateGame grid iterations = simulate grid iterations 0
