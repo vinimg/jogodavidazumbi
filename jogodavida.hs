@@ -10,16 +10,6 @@ countNeighbors grid x y = (countLiveNeighbors grid x y, countZombieNeighbors gri
 isValidIndex :: Grid -> Int -> Int -> Bool
 isValidIndex grid x y = x >= 0 && x < length grid && y >= 0 && y < length (head grid)
 
--- nextGeneration :: Grid -> Grid
--- nextGeneration grid = [[nextState grid i j | j <- [0..length (head grid) - 1]] | i <- [0..length grid - 1]]
---   where
---     nextState grid x y
---       | grid !! x !! y == 0 = if countLiveNeighbors grid x y == 3 then 1 else 0
---       | grid !! x !! y == 1 =
---         if countZombieNeighbors grid x y >= 1 || countLiveNeighbors grid x y < 2 || countLiveNeighbors grid x y > 3
---           then 0
---           else 1
---       | grid !! x !! y == 2 = if countLiveNeighbors grid x y == 0 then 0 else 2
 nextGeneration :: Grid -> Grid
 nextGeneration grid = [[nextState grid i j | j <- [0..length (head grid) - 1]] | i <- [0..length grid - 1]]
   where
@@ -60,13 +50,26 @@ computeNextGeneration grid = (nextGrid, grid /= nextGrid)
   where
     nextGrid = nextGeneration grid
 
--- Exemplo de uso
+-- Function to read the initial grid from a file
+readInitialGridFromFile :: FilePath -> IO Grid
+readInitialGridFromFile filePath = do
+  contents <- readFile filePath
+  let rows = lines contents
+  return $ map (map read . words) rows
+
+-- Function to get the size of the grid
+getGridSize :: Grid -> (Int, Int)
+getGridSize grid = (length grid, length (head grid))
+
+-- Modified main function to read the initial grid from a file
 main :: IO ()
 main = do
-  putStrLn "Digite o tamanho da grade:"
-  size <- readLn
-  putStrLn "Digite o número de iterações desejadas:"
+  putStrLn "Enter the number of desired iterations:"
   iterations <- readLn
-  putStrLn "Preencha a grade inicial (0 para célula morta, 1 para célula viva, 2 para zumbi):"
-  initialGrid <- sequence [do putStrLn ("Fila " ++ show (i) ++ ":"); sequence [readLn | _ <- [1..size]] | i <- [1..size]]
+  putStrLn "Enter the path to the file with the initial grid:"
+  filePath <- getLine
+  initialGrid <- readInitialGridFromFile filePath
+  let (rows, cols) = getGridSize initialGrid
   simulateGame initialGrid iterations
+  
+
