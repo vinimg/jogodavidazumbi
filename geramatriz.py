@@ -6,8 +6,8 @@ def generate_matrix_file(filepath, rows, cols):
         for row in matrix:
             f.write(' '.join(map(str, row)) + '\n')
 
-linha = 5
-coluna = 7
+linha = 100
+coluna = 200
 
 generate_matrix_file(f'{linha}x{coluna}.txt', linha, coluna)
 

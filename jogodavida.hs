@@ -29,7 +29,7 @@ nextGeneration grid = [[nextState grid i j | j <- [0..length (head grid) - 1]] |
 printGrid :: Grid -> IO ()
 printGrid grid = mapM_ printRow grid
   where
-    printRow row = putStrLn (unwords (map show row))
+    printRow row = putStrLn (concatMap show row)
 
 simulateGame :: Grid -> Int -> IO ()
 simulateGame grid iterations = simulate grid iterations 0
@@ -66,9 +66,9 @@ main :: IO ()
 main = do
   putStrLn "Enter the number of desired iterations:"
   iterations <- readLn
-  putStrLn "Enter the path to the file with the initial grid:"
-  filePath <- getLine
-  initialGrid <- readInitialGridFromFile filePath
+  -- putStrLn "Enter the path to the file with the initial grid:"
+  -- filePath <- getLine
+  initialGrid <- readInitialGridFromFile "50x55.txt"
   let (rows, cols) = getGridSize initialGrid
   simulateGame initialGrid iterations
   
